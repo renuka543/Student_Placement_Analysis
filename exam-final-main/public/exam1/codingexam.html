@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coding Exam with MCQs</title>
+    <style>
+   /* Basic Theme Colors and Font */
+  body {
+    font-family: 'Roboto', sans-serif;
+    background: url('C:/Users/SVBS/Downloads/images (2).jfif') center top no-repeat;
+    background-size: 200px 200px;
+    background-position: center 200px;
+    color: #333;
+    margin: 0;
+    padding: 0;
+    position: relative;
+}
+
+/* Overlay for background image */
+body::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.85);
+    z-index: -1;
+}
+
+.container {
+    position: relative;
+    z-index: 1;
+}
+
+h1, h2 {
+    color: #4b6584;
+    margin-top: 20px;
+    font-weight: 700;
+    text-align: center;
+    animation: fadeIn 1s ease-in forwards;
+    opacity: 0;
+}
+
+.timer {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #e84118;
+    text-align: center;
+    margin: 20px 0;
+    animation: pulse 1s infinite alternate;
+    text-shadow: 1px 1px 5px rgba(232, 65, 24, 0.5);
+}
+
+.question, .mcq, .code-editor {
+    margin-top: 20px;
+    padding: 20px;
+    background: #ffffff;
+    animation: slideIn 0.6s ease-in-out;
+}
+
+.submit-btn, #submit-mcq, #next-btn {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 10px 25px;
+    font-size: 1em;
+    cursor: pointer;
+    background-color: #38ada9;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    transition: background-color 0.3s ease, transform 0.2s;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+/* Center align "Next" button */
+#next-btn {
+    display: block;
+    margin: 30px auto;
+}
+
+/* Hover effect for buttons */
+.submit-btn:hover, #next-btn:hover {
+    background-color: #079992;
+    transform: translateY(-2px);
+}
+
+/* Proper Alignment for Radio Button */
+.form-check {
+    display: flex;
+    align-items: center;
+    justify-content: center;  /* Align radio button and text horizontally */
+    margin: 10px 0;
+}
+
+.form-check-input {
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    background-color: #ffffff;
+    border: 2px solid #4b6584;
+    border-radius: 50%;
+    margin-right: 10px;
+    transition: background-color 0.3s ease;
+    position: relative;
+    top: 2px; /* Small tweak for better vertical alignment */
+}
+
+.form-check-input:checked {
+    background-color: #38ada9;
+    border-color: #38ada9;
+}
+
+.form-check-label {
+    color: #4b6584;
+    margin: 0;
+    transform: scale(1.2);
+}
+
+/* Styles for MCQ questions */
+.mcq {
+    border: 1px solid #ffffff;
+    padding: 15px;
+    margin-bottom: 20px;
+    background: #f4f6f6;
+    border-radius: 5px;
+    background: url('file:///C:/Desktop/images (2).jfif') center top no-repeat;
+    background-size: 200px 200px;
+    background-position: center 200px;
+    color: #4b6584;
+    text-align: center;
+    position: relative;
+}
+
+.mcq h3 {
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.mcq label {
+    display: flex; /* Aligning radio button and text in a row */
+    align-items: center; /* Align radio button with text */
+    margin-bottom: 8px; /* Space between options */
+    font-size: 16px;
+    
+}
+
+.mcq input[type="radio"] {
+    margin-left: 390px; /* Space between radio button and label */
+    vertical-align: middle; /* Vertically align radio button with label text */
+    transform: scale(1.2); /* Make radio button slightly larger */
+   
+}
+
+/* Animation effects */
+@keyframes pulse {
+    from { opacity: 1; }
+    to { opacity: 0.7; }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideIn {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+</style>
+</head>
+<body>
+    
+    <h1>Coding Exam with MCQs</h1>
+    <div class="timer" id="timer">Time Remaining: 25:00</div>
+
+    <!-- Multiple Choice Questions Section -->
+    
+    <div id="mcq-section">
+        <div id="mcq"></div>
+    </div>
+
+    <button id="next-btn" onclick="nextMCQ()">Next Question</button>
+    <button id="submit-mcq" onclick="submitMCQ()" style="display: none;">Submit All MCQs</button>
+    <div id="mcqResult" class="result"></div>
+
+    <!-- Coding Questions Section -->
+    <div id="coding-section" style="display: none;"></div>
+    <button id="submit-coding" onclick="submitCoding()" style="display: none;">Submit All Coding Questions</button>
+    <div id="finalResult" class="result" style="display: none;"></div>
+
+    <script>
+        // MCQ questions and correct answers
+        const mcqQuestions = [
+            { question: "What is the output of 5 + '5' in JavaScript?", options: ["10", "55", "Error", "NaN"], answer: "55" },
+            { question: "Which method is used to add elements to an array in JavaScript?", options: ["push()", "add()", "insert()", "append()"], answer: "push()" },
+            { question: "What does '===' operator do in JavaScript?", options: ["Checks value and type", "Checks only value", "Assigns value", "None of the above"], answer: "Checks value and type" },
+            { question: "Which of the following is a JavaScript data type?", options: ["String", "Boolean", "Undefined", "All of the above"], answer: "All of the above" },
+            { question: "What is the correct syntax to create a function in JavaScript?", options: ["function myFunction()", "function:myFunction()", "function = myFunction()", "myFunction = function()"], answer: "function myFunction()" },
+            { question: "How do you create an array in JavaScript?", options: ["[]", "{}", "()", "<>"], answer: "[]" },
+            { question: "Which operator is used to assign a value to a variable?", options: ["=", "==", "===", "!="], answer: "=" },
+            { question: "What is the purpose of the 'this' keyword in JavaScript?", options: ["Refers to the global object", "Refers to the current object", "Refers to the previous object", "None of the above"], answer: "Refers to the current object" },
+            { question: "How do you declare a JavaScript variable?", options: ["var myVar", "v myVar", "variable myVar", "declare myVar"], answer: "var myVar" },
+            { question: "Which of the following is NOT a JavaScript framework?", options: ["React", "Vue", "Django", "Angular"], answer: "Django" },
+            { question: "What is a closure in JavaScript?", options: ["A function with access to its own scope", "A function that cannot be called", "A way to access parent scope variables", "None of the above"], answer: "A way to access parent scope variables" },
+            { question: "Which method is used to remove the last element from an array in JavaScript?", options: ["pop()", "shift()", "splice()", "slice()"], answer: "pop()" },
+            { question: "What does JSON stand for?", options: ["JavaScript Object Notation", "JavaScript Online Notation", "Java Object Notation", "None of the above"], answer: "JavaScript Object Notation" },
+            { question: "Which symbol is used for comments in JavaScript?", options: ["//", "/*", "#", "// and /*"], answer: "// and /*" },
+            { question: "What is the correct way to write a JavaScript array?", options: ["let arr = '1, 2, 3'", "let arr = (1, 2, 3)", "let arr = [1, 2, 3]", "let arr = {1, 2, 3}"], answer: "let arr = [1, 2, 3]" },
+        ];
+
+        // Shuffle MCQ questions
+        const shuffledMCQs = mcqQuestions.sort(() => Math.random() - 0.5);
+        let currentMCQIndex = 0;
+        let mcqScore = 0; // To keep track of MCQ score
+
+        // Coding questions with expected outputs and links to HackerRank
+        const codingQuestions = [
+            { question: "Remove Duplicates from Sorted Array", expectedOutput: "Output: 5, nums = [0,1,2,3,4,_,_,_,_,_]", template: "WRITE EXECUTED CODE HERE", link: "https://leetcode.com/problems/remove-duplicates-from-sorted-array/description/?envType=study-plan-v2&envId=top-interview-150" },
+            { question: "Reverse Words in a String", expectedOutput: "blue is sky the", template: "WRITE EXECUTED CODE HERE", link: "https://leetcode.com/problems/reverse-words-in-a-string/description/?envType=study-plan-v2&envId=top-interview-150" },
+            { question: "Container With Most Water", expectedOutput: 49, template: "WRITE EXECUTED CODE HERE", link: "https://leetcode.com/problems/container-with-most-water/description/?envType=study-plan-v2&envId=top-interview-150" },
+            { question: "Set Matrix Zeroes", expectedOutput: [[1,0,1],[0,0,0],[1,0,1]], template: "WRITE EXECUTED CODE HERE", link: "https://leetcode.com/problems/set-matrix-zeroes/description/?envType=study-plan-v2&envId=top-interview-150" },
+            { question: "Two Sum", expectedOutput: [0,1], template: "WRITE EXECUTED CODE HERE", link: "https://leetcode.com/problems/two-sum/description/?envType=study-plan-v2&envId=top-interview-150" },
+            { question: "Valid Parentheses", expectedOutput: true, template: "WRITE EXECUTED CODE HERE", link: "https://leetcode.com/problems/valid-parentheses/description/?envType=study-plan-v2&envId=top-interview-150" },
+            { question: "Remove Nth Node From End of List", expectedOutput: [1,2,3,5], template: "WRITE EXECUTED CODE HERE", link: "https://leetcode.com/problems/remove-nth-node-from-end-of-list/description/?envType=study-plan-v2&envId=top-interview-150" },
+            { question: "Search in Rotated Sorted Array", expectedOutput: 1, template: "WRITE EXECUTED CODE HERE", link: "https://leetcode.com/problems/search-in-rotated-sorted-array/description/?envType=study-plan-v2&envId=top-interview-150" },
+        ];
+
+        // Shuffle coding questions
+        const shuffledCodingQuestions = codingQuestions.sort(() => Math.random() - 0.5);
+        let codingScore = 0; // To keep track of coding score
+
+        function loadMCQ() {
+            if (currentMCQIndex < shuffledMCQs.length) {
+                const currentQuestion = shuffledMCQs[currentMCQIndex];
+                const questionHTML = `
+                    <div class="mcq">
+                        <h3>${currentQuestion.question}</h3>
+                        ${currentQuestion.options.map((option, index) => `
+                            <label>
+                                <input type="radio" name="mcq${currentMCQIndex}" value="${option}"> ${option}
+                            </label>
+                        `).join('')}
+                    </div>
+                `;
+                document.getElementById("mcq").innerHTML = questionHTML;
+            } else {
+                document.getElementById("mcq").style.display = "none";
+                document.getElementById("submit-mcq").style.display = "block";
+                loadCoding();
+            }
+        }
+
+        function nextMCQ() {
+            const selectedOption = document.querySelector(`input[name="mcq${currentMCQIndex}"]:checked`);
+            if (selectedOption) {
+                if (selectedOption.value === shuffledMCQs[currentMCQIndex].answer) {
+                    mcqScore++;
+                }
+                currentMCQIndex++;
+                loadMCQ();
+            } else {
+                alert("Please select an option before proceeding.");
+            }
+        }
+
+        function submitMCQ() {
+            document.getElementById("mcq-section").style.display = "none";
+            document.getElementById("mcqResult").innerText = `You scored ${mcqScore} out of ${shuffledMCQs.length} in MCQs!`;
+            document.getElementById("coding-section").style.display = "block";
+            document.getElementById("submit-coding").style.display = "block";
+        }
+
+        function loadCoding() {
+            const codingHTML = `
+                <div class="question">
+                    <h3>${shuffledCodingQuestions[0].question} - <a href="${shuffledCodingQuestions[0].link}" target="_blank">Link</a></h3>
+                    <textarea class="code-editor" placeholder="${shuffledCodingQuestions[0].template}" id="code1"></textarea>
+                    <h3>${shuffledCodingQuestions[1].question} - <a href="${shuffledCodingQuestions[1].link}" target="_blank">Link</a></h3>
+                    <textarea class="code-editor" placeholder="${shuffledCodingQuestions[1].template}" id="code2"></textarea>
+                </div>
+            `;
+            document.getElementById("coding-section").innerHTML = codingHTML;
+        }
+
+      
+        const javaKeywords = ["public", "class", "void", "static", "System.out"];
+    const pythonKeywords = ["def", "import", "print", "return", "if __name__"];
+
+    function containsKeywords(code, keywords) {
+        return keywords.some(keyword => code.includes(keyword));
+    }
+
+    function submitCoding() {
+    const code1 = document.getElementById("code1").value.trim();
+    const code2 = document.getElementById("code2").value.trim();
+    let totalScore = mcqScore; // MCQ score multiplied for weight
+    let codingScore = 0;
+
+    // Initialize feedback variables
+    let feedback1 = "Coding Question 1: Incorrect";
+    let feedback2 = "Coding Question 2: Incorrect";
+
+    // Check each code submission for specific keywords (basic validation)
+    if (containsKeywords(code1, javaKeywords) || containsKeywords(code1, pythonKeywords)) {
+        codingScore += 10; // Award points if keywords are found
+        feedback1 = "Coding Question 1: Correct";
+    }
+
+    if (containsKeywords(code2, javaKeywords) || containsKeywords(code2, pythonKeywords)) {
+        codingScore += 10; // Award points if keywords are found
+        feedback2 = "Coding Question 2: Correct";
+    }
+
+    totalScore += codingScore; // Add coding score to total
+
+    // Store results in localStorage
+    localStorage.setItem("mcqScore", mcqScore);
+    localStorage.setItem("codingScore", codingScore);
+    localStorage.setItem("totalScore", totalScore + 50); // Adding aptitude score as 50
+    localStorage.setItem("feedback1", feedback1);
+    localStorage.setItem("feedback2", feedback2);
+
+    // Redirect to results page
+    window.location.href = "results.html"; // Ensure this is the URL of your results page
+}
+
+
+
+
+
+        // Timer logic
+        let timeRemaining = 1500; // 25 minutes
+        const timerElement = document.getElementById("timer");
+        setInterval(() => {
+            timeRemaining--;
+            const minutes = Math.floor(timeRemaining / 60);
+            const seconds = timeRemaining % 60;
+            timerElement.innerText = `Time Remaining: ${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+            if (timeRemaining <= 0) {
+                alert("Time's up!");
+                document.getElementById("mcq-section").style.display = "none";
+                document.getElementById("coding-section").style.display = "none";
+                document.getElementById("finalResult").innerText = "Your time is up! Please review your answers.";
+                document.getElementById("finalResult").style.display = "block";
+            }
+        }, 1000);
+
+        // Start loading the first MCQ
+        loadMCQ();
+    </script>
+</body>
+</html>

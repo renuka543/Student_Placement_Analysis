@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exam Generator - Select Domains</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Night theme colors */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #121212;
+            color: #e0e0e0;
+            text-align: center;
+            padding: 20px;
+        }
+        h1, h3 {
+            color: #bb86fc;
+        }
+        /* Center and align checkboxes and labels */
+        .domain {
+            margin: 10px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            max-width: 300px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        /* Set checkbox and label width for consistent alignment */
+        .domain label {
+            width: 200px;
+            text-align: left;
+            margin-left: 10px;
+        }
+        input[type="checkbox"] {
+            accent-color: #bb86fc;
+            transform: scale(1.2);
+        }
+        /* Button styling */
+        button {
+            padding: 10px 20px;
+            font-size: 1.1em;
+            background-color: #bb86fc;
+            color: #121212;
+            border: none;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            margin-top: 50px;
+        }
+        button:hover {
+            background-color: #6200ea;
+            color: #e0e0e0;
+        }
+        /* Alert message styling */
+        .alert {
+            color: #cf6679;
+            margin-top: 10px;
+        }
+        /* Animations */
+        .fade-in {
+            animation: fadeIn 1s ease-in-out;
+        }
+        @keyframes fadeIn {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <h1 class="fade-in">Welcome! Ready to take the test?</h1>
+    <div class="fade-in">
+        <h3>Select 3 Domains:</h3>
+        <div class="domain">
+            <input type="checkbox" id="fullstack" value="Full Stack">
+            <label for="fullstack">Full Stack Development</label>
+        </div>
+        <div class="domain">
+            <input type="checkbox" id="dsa" value="DSA">
+            <label for="dsa">DSA</label>
+        </div>
+        <div class="domain">
+            <input type="checkbox" id="ml" value="Machine Learning">
+            <label for="ml">Machine Learning</label>
+        </div>
+        <div class="domain">
+            <input type="checkbox" id="deep-learning" value="Deep Learning">
+            <label for="deep-learning">Deep Learning</label>
+        </div>
+        <div class="domain">
+            <input type="checkbox" id="aptitude" value="Aptitude">
+            <label for="aptitude">Aptitude Test</label>
+        </div>
+        <button id="start-test" class="btn btn-primary fade-in">Start Test</button>
+        <div class="alert fade-in" id="alert-message"></div>
+    </div>
+    
+    <script>
+        document.getElementById("start-test").addEventListener("click", () => {
+            const selectedDomains = Array.from(document.querySelectorAll('input[type="checkbox"]:checked')).map(checkbox => checkbox.value);
+            const alertMessage = document.getElementById("alert-message");
+            alertMessage.innerText = '';
+
+            if (selectedDomains.length !== 3) {
+                alertMessage.innerText = "Please select exactly 3 domains.";
+                return;
+            }
+            localStorage.setItem("selectedDomains", JSON.stringify(selectedDomains));
+            window.location.href = "exam.html";
+        });
+    </script>
+    <!-- Bootstrap JavaScript Bundle with Popper -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

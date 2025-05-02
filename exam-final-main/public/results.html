@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exam Results</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f8ff;
+            animation: fadeIn 1.5s ease-in-out;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            color: #333;
+            animation: slideIn 1s ease-out;
+        }
+
+        #score {
+            margin: 20px 0;
+            font-size: 1.5em;
+            color: #6200ea;
+            animation: fadeIn 2s ease-in-out;
+        }
+
+        .message {
+            margin-top: 20px;
+            font-size: 1.2em;
+            color: #333;
+            animation: bounceIn 1.5s ease;
+        }
+
+        button {
+            padding: 10px 15px;
+            font-size: 1em;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            margin-top: 30px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+            transform: scale(1.1);
+        }
+
+        a {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        /* Keyframe animations */
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideIn {
+            0% {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            100% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes bounceIn {
+            0% {
+                transform: scale(0);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.1);
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Your Exam Results</h1>
+    <div id="score"></div>
+    <div class="message" id="message"></div>
+    <button onclick="window.location.href='index.html'">Take Another Test</button>
+    
+    <!--<script>
+        const totalScore = localStorage.getItem("totalScore");
+        const messageDiv = document.getElementById("message");
+
+        if (totalScore) {
+            document.getElementById("score").innerText = `Your total score is: ${totalScore}`;
+            
+            // Check if the score is 45 or above
+            if (parseInt(totalScore) >= 45) {
+                messageDiv.innerHTML = `Congratulations! You can proceed to the <button onclick="window.location.href='exam1/hidden.html';">Coding Exam</button>`;
+
+
+            } else {
+                messageDiv.innerText = `Your performance is not satisfactory. Please restart the test.`;
+            }
+        } else {
+            document.getElementById("score").innerText = `No score available.`;
+        }
+
+        // Clear local storage after displaying results
+        localStorage.removeItem("selectedDomains");
+        localStorage.removeItem("totalScore");
+    </script>-->
+    <!--<script>
+        const totalScore = localStorage.getItem("totalScore");
+      
+        if (totalScore) {
+          document.getElementById("score").innerText = `Your total score is: ${totalScore*2}`;//
+          //const percentageScore = (parseInt(totalScore) / 50) * 100;
+          // send score to backend
+          fetch("http://localhost:5002/update-score", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ testPercentage: totalScore*2 }),
+            //body: JSON.stringify({ testPercentage: percentageScore.toFixed(2) }) // round to 2 decimal places
+          })
+          .then(res => res.json())
+          .then(data => console.log("Sent to backend:", data))
+          .catch(err => console.error("Failed to send score:", err));
+        }
+      </script>-->
+      <script>
+  const totalScore = localStorage.getItem("totalScore");
+
+  if (totalScore) {
+    document.getElementById("score").innerText = `Your total score is: ${totalScore * 2}`;
+
+    fetch("http://localhost:5002/update-score", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ testPercentage: totalScore * 2 }),
+    })
+    .then(res => res.json())
+    .then(data => console.log("Sent to backend:", data))
+    .catch(err => console.error("Failed to send score:", err));
+
+    setTimeout(() => {
+      if (window.opener) {
+        window.opener.postMessage("exam_completed", "*");
+      }
+      window.close();
+    }, 2000);
+  }
+
+  localStorage.removeItem("selectedDomains");
+  localStorage.removeItem("totalScore");
+</script>
+
+      
+     
+    
+</body>
+</html>

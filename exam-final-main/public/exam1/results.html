@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Results</title>
+    <style>
+        /* Add your styles here */
+    </style>
+</head>
+<body>
+    <div id="finalResult" class="container">
+        <h3>Your Final Score</h3>
+        <!-- Display User Name -->
+        <p id="userName"></p> 
+        <p id="mcqScore"></p>
+        <p id="codingScore"></p>
+        <p id="aptitudeScore"></p>
+        <p id="totalScore"></p>
+        <p id="feedback1"></p>
+        <p id="feedback2"></p>
+    </div>
+
+    <script>
+        // Retrieve data from localStorage
+        const name = localStorage.getItem("name") || "Unknown"; // Get the name from localStorage
+        const email = localStorage.getItem("email") || "No email provided";
+        const mcqScore = localStorage.getItem("mcqScore") || "0";
+        const codingScore = localStorage.getItem("codingScore") || "0";
+        const totalScore = localStorage.getItem("totalScore") || "0";
+        const feedback1 = localStorage.getItem("feedback1") || "No feedback provided for MCQs.";
+        const feedback2 = localStorage.getItem("feedback2") || "No feedback provided for coding.";
+    
+        // Display the user name on the results page
+        document.getElementById("userName").innerText = `Name: ${name}`;
+
+        // Display the exam data on the results page
+        document.getElementById("mcqScore").innerText = `MCQs Score: ${mcqScore}`;
+        document.getElementById("codingScore").innerText = `Coding Score: ${codingScore}`;
+        document.getElementById("aptitudeScore").innerText = `Aptitude Score: 50`; // Assuming aptitude is a fixed score
+        document.getElementById("totalScore").innerText = `Total Score: ${totalScore}`;
+        document.getElementById("feedback1").innerText = feedback1;
+        document.getElementById("feedback2").innerText = feedback2;
+    
+        // Prepare data to send to the backend
+        const resultData = {
+            name: name,
+            email: email,
+            mcqScore: mcqScore,
+            codingScore: codingScore,
+            aptitudeScore: "50",  // Assuming it's a fixed score
+            totalScore: totalScore,
+            feedback1: feedback1,
+            feedback2: feedback2
+        };
+    
+        // Send data to MongoDB
+        fetch('http://localhost:5002/submitFormDataAndResults', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(resultData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Results saved successfully:', data);
+            alert('Your results have been saved!');
+        })
+        .catch(error => {
+            console.error('Error saving results:', error);
+            alert('Failed to save results');
+        });
+    </script>
+</body>
+</html>

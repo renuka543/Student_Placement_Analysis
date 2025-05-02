@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exam Generator</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+      body {
+    font-family: 'Roboto', sans-serif;
+    background: url('images (2).jfif') center top no-repeat; /* Keep the image centered but move it down */
+    background-size: 200px 200px; 
+    background-position: center 200px; /* This moves the image down by 200px */
+    color: #333;
+    margin: 0;
+    padding: 0;
+    position: relative;
+}
+
+/* Overlay effect for a lower opacity on the background image */
+body::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.85); /* Increased opacity for a softer look */
+    z-index: -1;
+}
+
+.container {
+    position: relative;
+    z-index: 1;
+}
+
+h1, h2 {
+    color: #4b6584;
+    margin-top: 20px;
+    font-weight: 700;
+}
+
+       body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f2f6fc;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        
+        h1, h2 {
+            color: #4b6584;
+            margin-top: 20px;
+            font-weight: 700;
+        }
+        .timer {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #e84118;
+            text-align: center;
+            margin: 20px 0;
+            animation: pulse 1s infinite alternate;
+            text-shadow: 1px 1px 5px rgba(232, 65, 24, 0.5);
+        }
+        @keyframes pulse {
+            from { opacity: 1; }
+            to { opacity: 0.7; }
+        }
+        #question-container {
+            margin-top: 20px;
+        }
+        .question {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+            animation: fadeInUp 0.6s ease-in-out;
+        }
+        @keyframes fadeInUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .submit-btn, #next {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 25px;
+            font-size: 1em;
+            cursor: pointer;
+            background-color: #38ada9;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            transition: background-color 0.3s ease, transform 0.2s;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .submit-btn:hover, #next:hover {
+            background-color: #079992;
+            transform: translateY(-2px);
+        }
+        .form-check {
+    display: flex;
+    align-items: center;
+    margin: 10px 0;
+}
+
+.form-check-input {
+    margin-right: 10px;
+    transform: scale(1.2); /* Adjust the size of the radio button if needed */
+}
+
+.form-check-label {
+    color: #4b6584;
+    margin: 0; /* Remove any top margin */
+    line-height: 1.5; /* Set line height for consistent spacing */
+}
+
+        .result {
+            font-size: 1.2em;
+            text-align: center;
+            color: #38ada9;
+        }
+        .mcq input {
+            margin-right: 10px;
+        }
+        .form-check-label {
+            color: #4b6584;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center"><i class="fas fa-pen-fancy"></i> CORE&APTITUDE Questions</h1>
+        <div id="timer" class="timer">Time Left: <span id="time">30:00</span></div>
+        <div id="question-container">
+            <div id="question-counter" class="text-center font-weight-bold">0/0</div>
+            <h2 id="question-text" class="my-4"></h2>
+            <div id="answer-input" class="text-center"></div>
+            <div class="text-center">
+                <button id="submit" class="submit-btn"><i class="fas fa-check"></i> Submit Answer</button>
+                <button id="next" class="submit-btn" style="display: none;"><i class="fas fa-arrow-right"></i> Next Question</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentQuestionIndex = 0;
+        let questions = [];
+        let aptitudeScore = 0;
+        let timerDuration = 30 * 60;
+
+        const timerInterval = setInterval(() => {
+            if (timerDuration <= 0) {
+                clearInterval(timerInterval);
+                alert("Time's up! Submitting your answers.");
+                submitAllAnswers();
+            } else {
+                timerDuration--;
+                const minutes = Math.floor(timerDuration / 60);
+                const seconds = timerDuration % 60;
+                document.getElementById("time").innerText = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+            }
+        }, 1000);
+
+        async function fetchQuestions() {
+            const selectedDomains = JSON.parse(localStorage.getItem("selectedDomains"));
+            if (!selectedDomains || selectedDomains.length === 0) {
+                alert("No domains selected!");
+                return;
+            }
+            const response = await fetch('/getRandomQuestions', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ domains: selectedDomains })
+            });
+            if (!response.ok) {
+                console.error('Error fetching questions:', response.statusText);
+                return;
+            }
+            const data = await response.json();
+            questions = data.questions;
+            questions = questions.sort(() => Math.random() - 0.5);
+
+            if (questions.length === 0) {
+                alert("No questions found!");
+            } else {
+                displayQuestion();
+                document.getElementById("question-counter").innerText = `0/${questions.length}`;
+            }
+        }
+
+        function displayQuestion() {
+            if (currentQuestionIndex < questions.length) {
+                const currentQuestion = questions[currentQuestionIndex];
+                document.getElementById("question-text").innerText = currentQuestion.text;
+
+                const answerInputDiv = document.getElementById("answer-input");
+                answerInputDiv.innerHTML = '';
+
+                if (currentQuestion.choices) {
+                    currentQuestion.choices.forEach(choice => {
+                        answerInputDiv.innerHTML += `<div class="form-check">
+                            <input class="form-check-input" type="radio" name="choice" value="${choice}">
+                            <label class="form-check-label">${choice}</label>
+                        </div>`;
+                    });
+                } else {
+                    const textarea = document.createElement("textarea");
+                    textarea.className = "form-control mt-3";
+                    textarea.name = "descriptiveAnswer";
+                    textarea.rows = 4;
+                    textarea.placeholder = "Write your answer here...";
+                    answerInputDiv.appendChild(textarea);
+                }
+
+                document.getElementById("question-counter").innerText = `${currentQuestionIndex + 1}/${questions.length}`;
+                document.getElementById("next").style.display = 'none';
+                document.getElementById("submit").style.display = 'inline-block';
+            } else {
+                submitAllAnswers();
+            }
+        }
+
+        function submitAnswer() {
+            const currentQuestion = questions[currentQuestionIndex];
+            if (currentQuestion.choices) {
+                const selectedAnswer = document.querySelector('input[name="choice"]:checked');
+                if (selectedAnswer) {
+                    if (currentQuestion.correctAnswer === selectedAnswer.value) {
+                        aptitudeScore += 1;
+                    }
+                }
+            } else {
+                const descriptiveAnswer = document.querySelector('textarea[name="descriptiveAnswer"]').value;
+                if (descriptiveAnswer.trim()) {
+                    const lineCount = descriptiveAnswer.split('\n').length;
+                    if (lineCount >= 3) {
+                        aptitudeScore += 3;
+                    } else if (lineCount === 2) {
+                        aptitudeScore += 1.5;
+                    }
+                }
+            }
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                document.getElementById("next").style.display = 'inline-block';
+                document.getElementById("submit").style.display = 'none';
+            } else {
+                document.getElementById("submit").innerText = 'Submit';
+                document.getElementById("next").style.display = 'none';
+            }
+            displayQuestion();
+        }
+
+        async function submitAllAnswers() {
+            const response = await fetch('/submitAnswers', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ aptitudeScore })
+            });
+            const result = await response.json();
+            localStorage.setItem("totalScore", result.totalScore);
+            window.location.href = "results.html";
+        }
+
+        document.getElementById("submit").addEventListener("click", submitAnswer);
+        document.getElementById("next").addEventListener("click", displayQuestion);
+
+        fetchQuestions();
+    </script>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
